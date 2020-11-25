@@ -3,6 +3,7 @@ import { View, StyleSheet, ScrollView, Image, Text, KeyboardAvoidingView, Alert 
 import { Icon, Input, Button } from 'react-native-elements';
 import axios from 'axios';
 
+import { baseURL } from './baseURL';
 import { AuthContext } from "./context";
 import { Loading } from './Loading';
 
@@ -12,7 +13,7 @@ const ScreenContainer = ({ children }) => (
 
 export default function ResetPassword() {
 
-	const { signOut, username, password } = useContext(AuthContext);
+	const { signOut, username, password, userJWT, removeDetails } = useContext(AuthContext);
 	const [isLoading, setIsLoading] = useState(true);
 	const [currentPassword, setCurrentPassword] = useState();
     const [newPassword, setNewPassword] = useState();
@@ -37,20 +38,34 @@ export default function ResetPassword() {
 		} else if (!/[!@#$%^&*]/.test(newPassword)) {
 			alert("Password must have at least one special character! Eg: !,@,#,$,%,^,&,*");
 		} else {
-			Alert.alert(
-				"Success",
-				"Password changed successfully! You must sign in again to continue!",
-				[
-					{
-						text: 'OK',
-						style: 'cancel',
-						onPress: () => {
-							signOut();
+			const user = {
+				username: username,
+				currentPassword: currentPassword,
+				newPassword: newPassword,
+				confirmPassword: confirmPassword
+			};
+			axios.post(`${baseURL}/users/reset`, user, { headers: { "x-auth-token": userJWT } })
+			.then((res) => {
+				console.log(res.data);
+				Alert.alert(
+					"Success",
+					"Password changed successfully! You must sign in again to continue!",
+					[
+						{
+							text: 'OK',
+							style: 'cancel',
+							onPress: () => {
+								signOut();
+								removeDetails();
+							}
 						}
-					}
-				],
-				{ cancelable: false }
-			);
+					],
+					{ cancelable: false }
+				);
+			})
+			.catch((err) => {
+				Alert.alert("Error",`Password change failed! ${err.response.data.msg}`);
+			});
         }
     },[username, currentPassword, newPassword, confirmPassword]);
 
