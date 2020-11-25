@@ -1,7 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet} from 'react-native';
 
 import { Loading } from './Loading';
+import ListingScreen from './ListingScreen';
 
 export default function Reading() {
 
@@ -18,9 +19,7 @@ export default function Reading() {
 	}
 	
 	return (
-		<View style={styles.container}>
-			<Text>Readng screen!</Text>
-		</View>
+		<ListingScreen/>
 	);
 }
 
