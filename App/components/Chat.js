@@ -1,5 +1,4 @@
 import React, { useContext, useState, useEffect } from "react";
-import { StyleSheet, Text, View } from 'react-native';
 
 import { AuthContext } from "./context";
 import ChatClass from './ChatClass';
@@ -21,17 +20,6 @@ export default function Chat() {
 	}
 
 	return (
-		<View style={styles.container}>
-			<Text>{name}</Text>
-		</View>
+		<ChatClass name={name} />
 	);
 };
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: '#fff',
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-});
