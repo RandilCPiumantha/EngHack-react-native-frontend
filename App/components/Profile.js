@@ -4,6 +4,7 @@ import { Button, Icon } from 'react-native-elements';
 import { Title, Card } from 'react-native-paper';
 import axios from 'axios';
 
+import { baseURL } from './baseURL';
 import { AuthContext } from "./context";
 import { Loading } from './Loading';
 
@@ -13,16 +14,19 @@ const ScreenContainer = ({ children }) => (
 
 export default function Profile({ navigation }) {
 
-	const { signOut, username, password, removeDetails } = useContext(AuthContext);
+	const { signOut, username, password, userJWT, removeDetails } = useContext(AuthContext);
+
 	const [isLoading, setIsLoading] = useState(true);
+	const [error, setError] = useState('');
+	const [post, setPost] = useState({});
 
 	const openMobile = useCallback(()=>{
     	if(Platform.OS === "android") {
-        	Linking.openURL(`tel:0778257254`)
+        	Linking.openURL(`tel:${post.mobile}`)
         } else {
-        	Linking.openURL(`telprompt:0778257254`)
+        	Linking.openURL(`telprompt:${post.mobile}`)
         }
-	},[]);
+	},[post.mobile]);
 
 	const confirmSignOut = () => {
         Alert.alert(
@@ -46,13 +50,35 @@ export default function Profile({ navigation }) {
     }
 
 	useEffect(() => {
-		setTimeout(() => {
+		const user = {
+			username: username,
+			password: password
+		};
+		axios.post(`${baseURL}/users`, user, { headers: { "x-auth-token": userJWT } })
+		.then((response) => {
 			setIsLoading(false);
-		}, 1500);
-	}, []);
+			setPost(response.data);
+			setError('');
+		})
+		.catch((err) => {
+			setIsLoading(false);
+			setPost({});
+			setError(`Error - ${err}! Reload the App. If it doesn't work, you need to Sign In again!`);
+		});
+	}, [username, password, post, error]);
 
 	if (isLoading) {
 		return <Loading />;
+	}
+
+	if (error) {
+		return (
+			<ScrollView>
+				<Text>
+					{error}
+				</Text>
+			</ScrollView>
+		);
 	}
 	
 	return (
@@ -63,39 +89,39 @@ export default function Profile({ navigation }) {
 						style={{width:140,height:140,borderRadius:140/2}}
 						source={require(`../../assets/faceavatar.png`)}
 					/>
-					<Title style={styles.profileTitle}>Dasith Deelaka</Title>
+					<Title style={styles.profileTitle}>{post.name}</Title>
 					<Text style={styles.profileClinicID}>{username}</Text>
 				</View>
 				<View style={styles.container}>
 					<Card style={styles.mycard}>
 						<View style={styles.cardContent}>
 							<Icon name="id-card-o" type='font-awesome' size={23} color="#2979FF" />
-							<Text style={styles.mytext}>962931073V</Text>
+							<Text style={styles.mytext}>{post.nic}</Text>
 						</View>
 					</Card>
 					<Card style={styles.mycard} onPress={()=>openMobile()}>
 						<View style={styles.cardContent}>
 							<Icon name="mobile" type='font-awesome' size={40} color="#2979FF" />
-							<Text style={styles.mytextMobile}>0778257254</Text>
+							<Text style={styles.mytextMobile}>{post.mobile}</Text>
 						</View>
 					</Card>
 					<Card
 						style={styles.mycard}
 						onPress={()=>{
-							Linking.openURL(`mailto:deelakajagoda@gmail.com`)
+							Linking.openURL(`mailto:${post.email}`)
 							.then((res) => {console.log(res)})
 							.catch((err) => {console.log(err)})
 						}}
 					>
 						<View style={styles.cardContent}>
 							<Icon name="envelope-o" type='font-awesome' size={29} color="#2979FF" />
-							<Text style={styles.mytext}>deelakajagoda@gmail.com</Text>
+							<Text style={styles.mytext}>{post.email}</Text>
 						</View>
 					</Card>
 					<Card style={styles.mycard}>
 						<View style={styles.cardContent}>
 							<Icon name="address-card-o" type='font-awesome' size={26} color="#2979FF" />
-							<Text style={styles.mytext}>No 5/B2/11, Thelawala road, Angulana, Mount Lavinia.</Text>
+							<Text style={styles.mytext}>{post.address}</Text>
 						</View>
 					</Card>
 				</View>

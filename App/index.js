@@ -244,7 +244,8 @@ export default () => {
 				}
 			},
 			username,
-			password
+			password,
+			userJWT
 		};
 	}, [username,password,userJWT]);
 
