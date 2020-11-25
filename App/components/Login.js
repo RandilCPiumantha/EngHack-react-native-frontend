@@ -1,12 +1,22 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { AuthContext } from "./context";
+
 export default function Login() {
+
+	var name = "dasith"
+	const { signIn } = React.useContext(AuthContext);
+
+	useEffect(() => {
+		setTimeout(() => {
+			signIn(name);
+		}, 1500);
+	}, []);
+
 	return (
 		<View style={styles.container}>
 			<Text>Login screen!</Text>
-			<StatusBar style="auto" />
 		</View>
 	);
 }

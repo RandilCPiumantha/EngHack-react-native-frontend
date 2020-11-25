@@ -1,12 +1,10 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-export default function Grammar() {
+export default function ResetPassword() {
 	return (
 		<View style={styles.container}>
-			<Text>Grammar screen!</Text>
-			<StatusBar style="auto" />
+			<Text>ResetPassword screen!</Text>
 		</View>
 	);
 }
