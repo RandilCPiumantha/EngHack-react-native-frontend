@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "EngHack",
+    "slug": "enghack",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.deelaka.enghack",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "com.deelaka.enghack",
+      "versionCode": 1
+    },
+    "description": "Mobile application created with react native for EngHack project hackathan",
+    "githubUrl": "https://github.com/DasithDeelaka/EngHack-react-native-frontend.git",
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
