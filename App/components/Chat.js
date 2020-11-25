@@ -6,7 +6,7 @@ import { Loading } from './Loading';
 
 export default function Chat() {
 
-	const { name } = useContext(AuthContext);
+	const { username } = useContext(AuthContext);
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
@@ -20,6 +20,6 @@ export default function Chat() {
 	}
 
 	return (
-		<ChatClass name={name} />
+		<ChatClass name={username} />
 	);
 };

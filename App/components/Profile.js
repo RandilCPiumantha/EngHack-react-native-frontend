@@ -13,7 +13,7 @@ const ScreenContainer = ({ children }) => (
 
 export default function Profile({ navigation }) {
 
-	const { signOut, username, password } = useContext(AuthContext);
+	const { signOut, username, password, removeDetails } = useContext(AuthContext);
 	const [isLoading, setIsLoading] = useState(true);
 
 	const openMobile = useCallback(()=>{
@@ -36,7 +36,8 @@ export default function Profile({ navigation }) {
                 {
                     text: 'OK',
                     onPress: () => {
-                        signOut();
+						signOut();
+						removeDetails();
                     }
                 }
             ],

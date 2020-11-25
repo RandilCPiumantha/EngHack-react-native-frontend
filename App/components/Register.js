@@ -1,7 +1,9 @@
-import React, { useState, useContext, useEffect } from "react";
-import { View, StyleSheet, ScrollView, Image, Text, KeyboardAvoidingView } from "react-native";
+import React, { useState, useContext, useEffect, useCallback } from "react";
+import { View, StyleSheet, ScrollView, Image, Text, KeyboardAvoidingView, Alert } from "react-native";
 import { Icon, Input, Button } from 'react-native-elements';
+import axios from 'axios';
 
+import { baseURL } from './baseURL';
 import { AuthContext } from "./context";
 import { Loading } from './Loading';
 
@@ -11,7 +13,7 @@ const ScreenContainer = ({ children }) => (
 
 export default function Register ({ navigation }) {
 
-	const { signIn } = useContext(AuthContext);
+	const { signIn, saveDetails } = useContext(AuthContext);
 	const [isLoading, setIsLoading] = useState(true);
 	const [enableShift, setEnableShift] = useState(false);
 
@@ -24,7 +26,7 @@ export default function Register ({ navigation }) {
 	const [phone, setPhone] = useState();
 	const [email, setEmail] = useState();
 
-	const validate = () => {
+	const validate = useCallback(() => {
 		if(!username || !newPassword || !confirmPassword || !name || !nic || !address || !phone || !email) {
 			alert("All fields are required!");
 		} else if((phone.length != 10)) {
@@ -36,9 +38,29 @@ export default function Register ({ navigation }) {
 		} else if (!/[!@#$%^&*]/.test(newPassword)) {
 			alert("Password must have at least one special character! Eg: !,@,#,$,%,^,&,*");
 		} else {
-			signIn(username,newPassword);
+			const user = {
+				username: username,
+				newPassword: newPassword,
+				confirmPassword: confirmPassword,
+				name: name,
+				nic: nic,
+				address: address,
+				mobile: phone,
+				email: email
+			};
+			axios.post(`${baseURL}/users/register`, user)
+			.then((res) => {
+				let loggedInUser = res.data;
+				let userJWT = loggedInUser.token;
+				Alert.alert("Welcome","Welcome to EngHack, " + username + "!");
+				signIn(userJWT,username,newPassword);
+				saveDetails(userJWT,username,newPassword);
+			})
+			.catch((err) => {
+				Alert.alert("Error",`Signin failed! ${err.response.data.msg}`);
+			});
 		}
-	}
+	},[username, newPassword, confirmPassword, name, nic, name, address, phone, email]);
 
 	useEffect(() => {
 		setTimeout(() => {
