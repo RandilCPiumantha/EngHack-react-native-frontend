@@ -165,9 +165,9 @@ const DrawerScreen = () => (
 
 // Render Authentication & Drawer at the initial app deployment
 const RootStack = createStackNavigator();
-const RootStackScreen = ({ name }) => (
+const RootStackScreen = ({ username, password }) => (
 	<RootStack.Navigator headerMode="none">
-		{name ? (
+		{username && password ? (
 			<RootStack.Screen
 				name="App"
 				component={DrawerScreen}
@@ -190,27 +190,31 @@ const RootStackScreen = ({ name }) => (
 export default () => {
 
 	const [isLoading, setIsLoading] = useState(true);
-	const [name, setName] = useState();
+	const [username, setName] = useState();
+	const [password, setPassword] = useState();
 
 	// Authentication process
 	const authContext = useMemo(() => {
 		return {
-			signIn: (name) => {
+			signIn: (username,password) => {
 				setIsLoading(false);
-				setName(name);
+				setName(username);
+				setPassword(password);
 			},
 			signOut: () => {
 				setIsLoading(false);
 				setName();
+				setPassword();
 			},
-			name
+			username,
+			password
 		};
-	}, [name]);
+	}, [username,password]);
 
 	// Splash screen
 	useEffect(() => {
 		setTimeout(() => {
-		setIsLoading(false);
+			setIsLoading(false);
 		}, 1500);
 	}, []);
 
@@ -221,7 +225,7 @@ export default () => {
 	return (
 		<AuthContext.Provider value={authContext}>
 			<NavigationContainer>
-				<RootStackScreen name={name} />
+				<RootStackScreen username={username} password={password} />
 			</NavigationContainer>
 		</AuthContext.Provider>
 	);
