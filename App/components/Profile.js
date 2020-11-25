@@ -65,7 +65,7 @@ export default function Profile({ navigation }) {
 			setPost({});
 			setError(`Error - ${err}! Reload the App. If it doesn't work, you need to Sign In again!`);
 		});
-	}, [username, password, post, error]);
+	}, []);
 
 	if (isLoading) {
 		return <Loading />;
