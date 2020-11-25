@@ -21,6 +21,10 @@ export default function Login ({ navigation }) {
 	const validate = () => {
 		if(!username || !password) {
 			alert("Username or Password cannot be empty!");
+		} else if(!(password.length >= 10)) {
+			alert("Password need to be at least 10 digits!");
+		} else if (!/[!@#$%^&*]/.test(password)) {
+			alert("Password must have at least one special character! Eg: !,@,#,$,%,^,&,*");
 		} else {
 			signIn(username,password);
 			if (remember) {
@@ -100,6 +104,14 @@ export default function Login ({ navigation }) {
 							buttonStyle={{ backgroundColor: "#2979FF" }}
 						/>
 					</View>
+					<View style={styles.textButtonView}>
+						<Text style={styles.createAccountText}>Don't have an account?</Text>
+						<Button
+							type="clear"
+							title="Create Account"
+							onPress={() => navigation.push("Register")}
+						/>
+					</View>
 				</View>
             </ScrollView>
 		</ScreenContainer>
@@ -112,7 +124,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		marginLeft: 10,
 		marginRight: 10,
-		marginTop:40
+		marginTop:20
 	},
 	logoView: {
 		flex: 1,
@@ -130,7 +142,13 @@ const styles = StyleSheet.create({
 	formCheckbox: {
         margin: 10,
         backgroundColor: null
-    },
+	},
+	textButtonView: {
+		flex: 1,
+		margin: 20,
+		justifyContent: "center",
+		alignItems: "center"
+	},
 	stretch: {
 		width: 300,
 		height: 100
