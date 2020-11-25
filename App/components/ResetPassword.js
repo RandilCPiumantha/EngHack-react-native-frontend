@@ -1,7 +1,22 @@
-import React from 'react';
+import React, { useContext, useState, useEffect } from "react";
 import { StyleSheet, Text, View } from 'react-native';
 
+import { Loading } from './Loading';
+
 export default function ResetPassword() {
+
+	const [isLoading, setIsLoading] = useState(true);
+
+	useEffect(() => {
+		setTimeout(() => {
+			setIsLoading(false);
+		}, 1500);
+	}, []);
+
+	if (isLoading) {
+		return <Loading />;
+	}
+	
 	return (
 		<View style={styles.container}>
 			<Text>ResetPassword screen!</Text>
