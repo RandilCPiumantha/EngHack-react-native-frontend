@@ -12,6 +12,7 @@ import Login from './components/Login';
 import Profile from './components/Profile';
 import ResetPassword from './components/ResetPassword';
 import Grammar from './components/Grammar';
+import Listening from './components/Listening';
 import Reading from './components/Reading';
 import Read from './components/Read';
 import Chat from './components/Chat';
@@ -78,6 +79,26 @@ const GrammarStackScreen = ({ navigation }) => (
 	</GrammarStack.Navigator>
 );
 
+// Stack Navigation from Listening screen
+const ListenStack = createStackNavigator();
+const ListenStackScreen = ({ navigation }) => (
+	<ListenStack.Navigator>
+		<ListenStack.Screen
+			name="Listening"
+			component={Listening}
+			options={{ headerLeft: () => (
+				<Icon
+					name="menu"
+					size={24}
+					color= 'grey'
+					onPress={ () => navigation.toggleDrawer() }
+					style={{ marginLeft: 15 }}
+				/>
+            ) }}
+		/>
+	</ListenStack.Navigator>
+);
+
 // Stack Navigation from Reading screen
 const ReadingStack = createStackNavigator();
 const ReadingStackScreen = ({ navigation }) => (
@@ -141,6 +162,16 @@ const DrawerScreen = () => (
 				drawerIcon: ({ focused, color, size }) => {
 					let iconName;
 					iconName = focused ? 'book' : 'book';
+					return <Icon name={iconName} size={size} color={color} type='font-awesome' />;
+				}
+			})}
+		/>
+		<Drawer.Screen name="Listening"
+			component={ListenStackScreen}
+			options={ () => ({
+				drawerIcon: ({ focused, color, size }) => {
+					let iconName;
+					iconName = focused ? 'podcast' : 'podcast';
 					return <Icon name={iconName} size={size} color={color} type='font-awesome' />;
 				}
 			})}

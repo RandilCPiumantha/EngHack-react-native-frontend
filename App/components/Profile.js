@@ -173,7 +173,8 @@ const styles = StyleSheet.create({
 	buttonView:{
 		flexDirection:"row",
 		justifyContent:"space-around",
-		padding:10,margin:20
+		padding:10,
+		margin:20
 	},
 	profileTitle:{
 		fontSize:25
