@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
@@ -13,6 +13,7 @@ import Profile from './components/Profile';
 import ResetPassword from './components/ResetPassword';
 import Grammar from './components/Grammar';
 import Reading from './components/Reading';
+import Read from './components/Read';
 import Chat from './components/Chat';
 import { CustomDrawerContent } from './components/CustomDrawerContent';
 import { AuthContext } from "./components/context";
@@ -93,6 +94,10 @@ const ReadingStackScreen = ({ navigation }) => (
 					style={{ marginLeft: 15 }}
 				/>
             ) }}
+		/>
+		<ReadingStack.Screen
+			name="Read"
+			component={Read}
 		/>
 	</ReadingStack.Navigator>
 );
