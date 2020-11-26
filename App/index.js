@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
@@ -12,7 +12,9 @@ import Login from './components/Login';
 import Profile from './components/Profile';
 import ResetPassword from './components/ResetPassword';
 import Grammar from './components/Grammar';
+import Listening from './components/Listening';
 import Reading from './components/Reading';
+import Read from './components/Read';
 import Chat from './components/Chat';
 import { CustomDrawerContent } from './components/CustomDrawerContent';
 import { AuthContext } from "./components/context";
@@ -77,6 +79,26 @@ const GrammarStackScreen = ({ navigation }) => (
 	</GrammarStack.Navigator>
 );
 
+// Stack Navigation from Listening screen
+const ListenStack = createStackNavigator();
+const ListenStackScreen = ({ navigation }) => (
+	<ListenStack.Navigator>
+		<ListenStack.Screen
+			name="Listening"
+			component={Listening}
+			options={{ headerLeft: () => (
+				<Icon
+					name="menu"
+					size={24}
+					color= 'grey'
+					onPress={ () => navigation.toggleDrawer() }
+					style={{ marginLeft: 15 }}
+				/>
+            ) }}
+		/>
+	</ListenStack.Navigator>
+);
+
 // Stack Navigation from Reading screen
 const ReadingStack = createStackNavigator();
 const ReadingStackScreen = ({ navigation }) => (
@@ -93,6 +115,10 @@ const ReadingStackScreen = ({ navigation }) => (
 					style={{ marginLeft: 15 }}
 				/>
             ) }}
+		/>
+		<ReadingStack.Screen
+			name="Read"
+			component={Read}
 		/>
 	</ReadingStack.Navigator>
 );
@@ -140,6 +166,16 @@ const DrawerScreen = () => (
 				}
 			})}
 		/>
+		<Drawer.Screen name="Listening"
+			component={ListenStackScreen}
+			options={ () => ({
+				drawerIcon: ({ focused, color, size }) => {
+					let iconName;
+					iconName = focused ? 'podcast' : 'podcast';
+					return <Icon name={iconName} size={size} color={color} type='font-awesome' />;
+				}
+			})}
+		/>
 		<Drawer.Screen name="Chat"
 			component={ChatStackScreen}
 			options={ () => ({
@@ -165,9 +201,9 @@ const DrawerScreen = () => (
 
 // Render Authentication & Drawer at the initial app deployment
 const RootStack = createStackNavigator();
-const RootStackScreen = ({ username, password }) => (
+const RootStackScreen = ({ username, password, userJWT }) => (
 	<RootStack.Navigator headerMode="none">
-		{username && password ? (
+		{username && password && userJWT ? (
 			<RootStack.Screen
 				name="App"
 				component={DrawerScreen}
@@ -190,29 +226,68 @@ const RootStackScreen = ({ username, password }) => (
 export default () => {
 
 	const [isLoading, setIsLoading] = useState(true);
-	const [username, setName] = useState();
+	const [username, setUsername] = useState();
 	const [password, setPassword] = useState();
+	const [userJWT, setUserJWT] = useState();
+
+	const loadDetails = async () => {
+		try {
+			let username = await SecureStore.getItemAsync("appUsername");
+			let password = await SecureStore.getItemAsync("appPassword");
+			let userJWT = await SecureStore.getItemAsync("userJWT");
+
+			if (username && password && userJWT) {
+				setUsername(username);
+				setPassword(password);
+				setUserJWT(userJWT);
+			}
+		} catch (err) {
+			alert (err);
+		}
+	}
 
 	// Authentication process
 	const authContext = useMemo(() => {
 		return {
-			signIn: (username,password) => {
+			signIn: (userJWT,username,password) => {
 				setIsLoading(false);
-				setName(username);
+				setUsername(username);
 				setPassword(password);
+				setUserJWT(userJWT);
 			},
 			signOut: () => {
 				setIsLoading(false);
-				setName();
+				setUsername();
 				setPassword();
+				setUserJWT();
+			},
+			saveDetails: async (userJWT,username,password) => {
+				try {
+					await SecureStore.setItemAsync("appUsername", String(username));
+					await SecureStore.setItemAsync("appPassword", String(password));
+					await SecureStore.setItemAsync("userJWT", String(userJWT));
+				} catch (err) {
+					alert (err);
+				}
+			},
+			removeDetails: async () => {
+				try {
+					await SecureStore.deleteItemAsync("appUsername");
+					await SecureStore.deleteItemAsync("appPassword");
+					await SecureStore.deleteItemAsync("userJWT");
+				} catch (err) {
+					alert (err);
+				}
 			},
 			username,
-			password
+			password,
+			userJWT
 		};
-	}, [username,password]);
+	}, [username,password,userJWT]);
 
 	// Splash screen
 	useEffect(() => {
+		loadDetails();
 		setTimeout(() => {
 			setIsLoading(false);
 		}, 1500);
@@ -225,7 +300,7 @@ export default () => {
 	return (
 		<AuthContext.Provider value={authContext}>
 			<NavigationContainer>
-				<RootStackScreen username={username} password={password} />
+				<RootStackScreen username={username} password={password} userJWT={userJWT} />
 			</NavigationContainer>
 		</AuthContext.Provider>
 	);

@@ -7,7 +7,7 @@ import { AuthContext } from "./context";
 
 export function CustomDrawerContent(props) {
 
-    const { signOut } = React.useContext(AuthContext);
+    const { signOut, removeDetails } = React.useContext(AuthContext);
 
     const confirmSignOut = () => {
         Alert.alert(
@@ -22,6 +22,7 @@ export function CustomDrawerContent(props) {
                     text: 'OK',
                     onPress: () => {
                         signOut();
+                        removeDetails();
                     }
                 }
             ],

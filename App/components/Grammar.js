@@ -1,9 +1,10 @@
 import React, { useContext, useState, useEffect } from "react";
 import { StyleSheet, Text, View } from 'react-native';
+import PlayQuiz from './quiz/Playquiz';
 
 import { Loading } from './Loading';
 
-export default function Grammar() {
+export default function Grammar({ navigation }) {
 
 	const [isLoading, setIsLoading] = useState(true);
 
@@ -19,7 +20,7 @@ export default function Grammar() {
 	
 	return (
 		<View style={styles.container}>
-			<Text>Grammar screen!</Text>
+			<PlayQuiz navigation={navigation} />
 		</View>
 	);
 }

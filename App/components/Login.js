@@ -1,8 +1,10 @@
 import React, { useState, useContext, useEffect, useCallback } from "react";
-import { View, StyleSheet, ScrollView, Image, Text } from "react-native";
+import { View, StyleSheet, ScrollView, Image, Text, Alert } from "react-native";
 import { Icon, Input, Button, CheckBox } from 'react-native-elements';
 import * as SecureStore from 'expo-secure-store';
+import axios from 'axios';
 
+import { baseURL } from './baseURL';
 import { AuthContext } from "./context";
 import { Loading } from './Loading';
 
@@ -12,13 +14,13 @@ const ScreenContainer = ({ children }) => (
 
 export default function Login ({ navigation }) {
 
-	const { signIn } = useContext(AuthContext);
+	const { signIn, saveDetails } = useContext(AuthContext);
 	const [isLoading, setIsLoading] = useState(true);
 	const [username, setUsername] = useState();
 	const [password, setPassword] = useState();
 	const [remember, setRemember] = useState(false);
 
-	const validate = () => {
+	const validate = useCallback(() => {
 		if(!username || !password) {
 			alert("Username or Password cannot be empty!");
 		} else if(!(password.length >= 10)) {
@@ -26,12 +28,26 @@ export default function Login ({ navigation }) {
 		} else if (!/[!@#$%^&*]/.test(password)) {
 			alert("Password must have at least one special character! Eg: !,@,#,$,%,^,&,*");
 		} else {
-			signIn(username,password);
-			if (remember) {
-				save();
-			}
+			const user = {
+				username: username,
+				password: password
+			};
+			axios.post(`${baseURL}/users/login`, user)
+			.then((res) => {
+				let loggedInUser = res.data;
+				let userJWT = loggedInUser.token;
+				Alert.alert("Welcome","Welcome to EngHack, " + username + "!");
+				signIn(userJWT,username,password);
+				saveDetails(userJWT,username,password);
+				if (remember) {
+					save();
+				}
+			})
+			.catch((err) => {
+				Alert.alert("Error",`Signin failed! ${err.response.data.msg}`);
+			});
 		}
-	}
+	},[username, password, remember]);
 
 	const save = useCallback(async () => {
 		try {
